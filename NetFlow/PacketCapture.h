@@ -12,9 +12,12 @@
 #include <net/if.h>
 #include <netinet/if_ether.h>
 #include <arpa/inet.h>
+
+#include <chrono>
+#include <ctime>  
 #include "Types.h"
 
-#define PCAP_CNT_MAX 10
+#define PCAP_CNT_MAX 1000
 #define PCAP_SNAPSHOT 1024
 #define PCAP_TIMEOUT 100
 
@@ -50,7 +53,7 @@ void initPCAP(){
     }
     if(pcap_loop(pd, PCAP_CNT_MAX, packet_view, 0) < 0){
         perror(pcap_geterr(pd));
-        exit(1);
+        //exit(1);
     }
 
     pcap_close(pd);
@@ -58,6 +61,7 @@ void initPCAP(){
 
 void packet_view(unsigned char *user, const struct pcap_pkthdr *pkthdr, const unsigned char *packet){
     Flow flow;
+    flow.timeStamp = std::chrono::system_clock::now();
 
     struct ip *iph; // IP header 구조체
     struct tcphdr *tcph; // TCP header 구조체
