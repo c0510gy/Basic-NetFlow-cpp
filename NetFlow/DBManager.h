@@ -15,6 +15,7 @@ public:
     DBManager(std::string filename);
     ~DBManager();
     void insert(FlowDBRecord& fr);
+    FlowDBRecord read();
 };
 static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
    int i;
@@ -74,11 +75,29 @@ void DBManager::insert(FlowDBRecord& fdbr){
     /* Execute SQL statement */
     rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
    
-    if( rc != SQLITE_OK ){
+    if(rc != SQLITE_OK){
         fprintf(stderr, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }else{
         fprintf(stdout, "Records created successfully\n");
+    }
+}
+FlowDBRecord DBManager::read(){
+    char *zErrMsg = 0;
+
+    /* Create SQL statement */
+    char *sql = "SELECT * from NETFLOW";
+
+    const char* data = "Callback function called";
+
+    /* Execute SQL statement */
+    rc = sqlite3_exec(db, sql, callback, (void*)data, &zErrMsg);
+
+    if(rc != SQLITE_OK ){
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }else{
+        fprintf(stdout, "Operation done successfully\n");
     }
 }
 
