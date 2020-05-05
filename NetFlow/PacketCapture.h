@@ -18,7 +18,7 @@
 #include <queue>
 #include "Types.h"
 
-#define PCAP_CNT_MAX 100
+#define PCAP_CNT_MAX 1000
 #define PCAP_SNAPSHOT 1024
 #define PCAP_TIMEOUT 100
 
