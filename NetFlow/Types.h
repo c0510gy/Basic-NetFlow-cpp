@@ -4,6 +4,7 @@
 
 #include <string>
 #include <ctime>
+#include <vector>
 
 struct Flow{
     std::string srcIP, desIP;
@@ -76,20 +77,77 @@ struct FlowRecord{
         std::time_t start_time = std::chrono::system_clock::to_time_t(startTime);
         std::tm * ptm = std::localtime(&start_time);
         char buffer[32];
-        // Format: Mo, 15.06.2009 20:20:00
-        std::strftime(buffer, 32, "%a, %d.%m.%Y %H:%M:%S", ptm);
+        std::strftime(buffer, 32, "%Y-%m-%d %H:%M:%S", ptm);
 
         std::chrono::duration<double> elapsed_seconds = endTime - startTime;
 
         return std::to_string(flow.protocol) + "\t"
                  + buffer + "\t"
                  + std::to_string(elapsed_seconds.count()) + "\t"
-                 + flow.srcIP + ":" + std::to_string(flow.srcPort) + "\t"
-                 + flow.desIP + ":" + std::to_string(flow.desPort) + "\t"
+                 + flow.srcIP + "\t"
+                 + flow.desIP + "\t"
+                 + std::to_string(flow.srcPort) + "\t"
+                 + std::to_string(flow.desPort) + "\t"
                  + std::to_string(flow.typeOfService) + "\t"
                  + std::to_string(flow.length) + "\t"
                  + std::to_string(packets);
     }
 };
+
+struct FlowDBRecord{
+    std::string startTime, srcIP, desIP;
+    double duration; // seconds
+    int protocol;
+    int srcPort, desPort;
+    int typeOfService;
+    int size;
+    int packets;
+    
+    FlowDBRecord(const FlowRecord& fr);
+    FlowDBRecord(const std::string& str);
+};
+FlowDBRecord::FlowDBRecord(const FlowRecord& fr){
+    std::time_t start_time = std::chrono::system_clock::to_time_t(fr.startTime);
+    std::tm * ptm = std::localtime(&start_time);
+    char buffer[32];
+    std::strftime(buffer, 32, "%Y-%m-%d %H:%M:%S", ptm);
+
+    std::chrono::duration<double> elapsed_seconds = fr.endTime - fr.startTime;
+
+    this->protocol = fr.flow.protocol;
+    this->startTime = buffer;
+    this->srcIP = fr.flow.srcIP;
+    this->desIP = fr.flow.desIP;
+    this->duration = elapsed_seconds.count();
+    this->srcPort = fr.flow.srcPort;
+    this->desPort = fr.flow.desPort;
+    this->typeOfService = fr.flow.typeOfService;
+    this->size = fr.flow.length;
+    this->packets = fr.packets;
+}
+FlowDBRecord::FlowDBRecord(const std::string& str){
+    std::vector<std::string> splited;
+    std::string tmp = "";
+    for(int j = 0; j < str.size(); ++j){
+        if(str[j] == '\t'){
+            splited.push_back(tmp);
+            tmp = "";
+        }else
+            tmp += str[j];
+    }
+    if(tmp != "")
+        splited.push_back(tmp);
+    
+    this->protocol = std::stoi(splited[0]);
+    this->startTime = splited[1];
+    this->srcIP = splited[3];
+    this->desIP = splited[4];
+    this->duration = std::stod(splited[2]);
+    this->srcPort = std::stoi(splited[5]);
+    this->desPort = std::stoi(splited[6]);
+    this->typeOfService = std::stoi(splited[7]);
+    this->size = std::stoi(splited[8]);
+    this->packets = std::stoi(splited[9]);
+}
 
 #endif
