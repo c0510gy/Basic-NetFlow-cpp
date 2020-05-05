@@ -7,9 +7,13 @@
 #include "Types.h"
 using namespace std;
 
+// Collector 정보
 #define COLLECTOR_IP "127.0.0.1"
 #define COLLECTOR_PORT 1234
+// flow 종료 판단 시간
 #define EXPIRE_TIME 10
+// flow 최대 기록 시간
+#define EXPIRE_MAX_TIME 6000
 
 queue<Flow> flowQ;
 set<FlowRecord> flowCache;
@@ -38,9 +42,10 @@ void exports(){
     for(auto itr = flowCache.begin(); itr != flowCache.end(); ++itr){
         FlowRecord fr = *itr;
         auto now = std::chrono::system_clock::now();
-        std::chrono::duration<double> elapsed_seconds = now - fr.endTime;
+        std::chrono::duration<double> elapsed_end_seconds = now - fr.endTime;
+        std::chrono::duration<double> elapsed_start_seconds = now - fr.startTime;
 
-        if(elapsed_seconds.count() > EXPIRE_TIME){
+        if(elapsed_end_seconds.count() > EXPIRE_TIME || elapsed_start_seconds.count() > EXPIRE_MAX_TIME){
             q.push(fr);
         }
     }
