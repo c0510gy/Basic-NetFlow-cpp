@@ -14,7 +14,8 @@
 #include <arpa/inet.h>
 
 #include <chrono>
-#include <ctime>  
+#include <ctime>
+#include <queue>
 #include "Types.h"
 
 #define PCAP_CNT_MAX 1000
@@ -24,9 +25,11 @@
 void packet_view(unsigned char *user, const struct pcap_pkthdr *h, const unsigned char *p);
 void initPCAP();
 
-void callback(Flow flow);
+std::queue<Flow> flowQ;
 
-void initPCAP(){
+void initPCAP(std::queue<Flow> flowQ){
+    ::flowQ = flowQ;
+
     char *dev;
     char errbuf[PCAP_ERRBUF_SIZE];
     bpf_u_int32 net;
@@ -97,7 +100,7 @@ void packet_view(unsigned char *user, const struct pcap_pkthdr *pkthdr, const un
         printf("no such type -> type : %d\n", e_type);
     }
 
-    callback(flow);
+    flowQ.push(flow);
 }
 
 #endif

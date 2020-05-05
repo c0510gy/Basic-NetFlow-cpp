@@ -7,6 +7,9 @@
 #include "Types.h"
 using namespace std;
 
+#define COLLECTOR_IP "127.0.0.1"
+#define COLLECTOR_PORT 1234
+
 queue<Flow> q;
 set<FlowRecord> flowCache;
 bool handler = true;
@@ -14,16 +17,12 @@ bool handler = true;
 void flowHandler();
 void showCache();
 
-void callback(Flow flow){ // PacketCapture
-    q.push(flow);
-}
-
 int main(){
-    UDPclient udp("127.0.0.1", 1234, 1024);
+    UDPclient udp(COLLECTOR_IP, COLLECTOR_PORT, 1024);
 
     thread thread_obj(flowHandler);
 
-    initPCAP();
+    initPCAP(q);
 
     handler = false;
 
