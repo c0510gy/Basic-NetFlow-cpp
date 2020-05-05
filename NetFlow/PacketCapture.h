@@ -18,17 +18,19 @@
 #include <queue>
 #include "Types.h"
 
-#define PCAP_CNT_MAX 1000
+#define PCAP_CNT_MAX 100
 #define PCAP_SNAPSHOT 1024
 #define PCAP_TIMEOUT 100
 
-void packet_view(unsigned char *user, const struct pcap_pkthdr *h, const unsigned char *p);
-void initPCAP();
+namespace pckcap{
+    std::queue<Flow> *flowQ;
 
-std::queue<Flow> flowQ;
+    void packet_view(unsigned char *user, const struct pcap_pkthdr *h, const unsigned char *p);
+    void initPCAP(std::queue<Flow>& flowQ);
+};
 
-void initPCAP(std::queue<Flow> flowQ){
-    ::flowQ = flowQ;
+void pckcap::initPCAP(std::queue<Flow>& flowQ){
+    pckcap::flowQ = &flowQ;
 
     char *dev;
     char errbuf[PCAP_ERRBUF_SIZE];
@@ -62,10 +64,10 @@ void initPCAP(std::queue<Flow> flowQ){
     pcap_close(pd);
 }
 
-void packet_view(unsigned char *user, const struct pcap_pkthdr *pkthdr, const unsigned char *packet){
+void pckcap::packet_view(unsigned char *user, const struct pcap_pkthdr *pkthdr, const unsigned char *packet){
     Flow flow;
     flow.timeStamp = std::chrono::system_clock::now();
-
+    
     struct ip *iph; // IP header 구조체
     struct tcphdr *tcph; // TCP header 구조체
     struct ether_header *etherh;
@@ -92,15 +94,15 @@ void packet_view(unsigned char *user, const struct pcap_pkthdr *pkthdr, const un
             flow.srcPort = ntohs(tcph->th_sport);
             flow.desPort = ntohs(tcph->th_dport);
         }
-    }else if( e_type == ETHERTYPE_ARP ){
-        printf("arp \n");
-    }else if( e_type == ETHERTYPE_REVARP ){
-        printf("rarp \n");
-    }else{
-        printf("no such type -> type : %d\n", e_type);
-    }
 
-    flowQ.push(flow);
+        flowQ->push(flow);
+    }else if(e_type == ETHERTYPE_ARP){
+        //printf("arp \n");
+    }else if(e_type == ETHERTYPE_REVARP){
+        //printf("rarp \n");
+    }else{
+        //printf("no such type -> type : %d\n", e_type);
+    }
 }
 
 #endif

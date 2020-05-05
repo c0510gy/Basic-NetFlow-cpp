@@ -81,7 +81,14 @@ struct FlowRecord{
 
         std::chrono::duration<double> elapsed_seconds = endTime - startTime;
 
-        return std::to_string(flow.protocol) + "\t" + buffer + "\t" + std::to_string(elapsed_seconds.count()) + "\t" + flow.srcIP + ":" + std::to_string(flow.srcPort) + "\t" + flow.desIP + ":" + std::to_string(flow.desPort) + "\t" + std::to_string(flow.length) + "\t" + std::to_string(packets);
+        return std::to_string(flow.protocol) + "\t"
+                 + buffer + "\t"
+                 + std::to_string(elapsed_seconds.count()) + "\t"
+                 + flow.srcIP + ":" + std::to_string(flow.srcPort) + "\t"
+                 + flow.desIP + ":" + std::to_string(flow.desPort) + "\t"
+                 + std::to_string(flow.typeOfService) + "\t"
+                 + std::to_string(flow.length) + "\t"
+                 + std::to_string(packets);
     }
 };
 
