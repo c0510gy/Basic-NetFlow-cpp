@@ -2,9 +2,9 @@
 #include <thread>
 #include <queue>
 #include <set>
-#include "UDP-Client.h"
-#include "PacketCapture.h"
-#include "Types.h"
+#include "headers/UDP-Client.h"
+#include "headers/PacketCapture.h"
+#include "headers/Types.h"
 using namespace std;
 
 // Collector 정보
@@ -59,8 +59,7 @@ void flowHandler(){
     while(handler){
         if(!flowQ.empty()){
             Flow flow = flowQ.front(); flowQ.pop();
-            //cout << flow.protocol << "\t" << flow.srcIP << ":" << flow.srcPort << "\t" << flow.desIP << ":" << flow.desPort << "\t" << flow.length << endl;
-
+            
             auto itr = flowCache.find(FlowRecord(flow));
             if(itr == flowCache.end()){
                 flowCache.insert(FlowRecord(flow));
@@ -73,8 +72,6 @@ void flowHandler(){
         }
 
         exports();
-        
-        //showCache();
     }
 }
 void showCache(){

@@ -58,7 +58,6 @@ void pckcap::initPCAP(std::queue<Flow>& flowQ){
     }
     if(pcap_loop(pd, PCAP_CNT_MAX, packet_view, 0) < 0){
         perror(pcap_geterr(pd));
-        //exit(1);
     }
 
     pcap_close(pd);
@@ -86,6 +85,12 @@ void pckcap::packet_view(unsigned char *user, const struct pcap_pkthdr *pkthdr, 
         flow.srcIP = inet_ntoa(iph->ip_src);
         flow.desIP = inet_ntoa(iph->ip_dst);
         flow.protocol = iph->ip_p;
+        /*
+            IPPROTO_TCP = 6
+            IPPROTO_UDP = 17
+            IPPROTO_ICMP = 1
+            IPPROTO_IP = 0
+        */
         flow.typeOfService = iph->ip_tos;
 
         // TCP

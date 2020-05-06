@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
 #include <sqlite3.h>
-#include "UDP-Server.h"
-#include "DBManager.h"
-#include "Types.h"
+#include "headers/UDP-Server.h"
+#include "headers/DBManager.h"
+#include "headers/Types.h"
 using namespace std;
 
 UDPserver udp = UDPserver(1234, 1024);
