@@ -1,6 +1,12 @@
 # Basic-NetFlow-cpp
 Basic NetFlow in C++ for practice
 
+## Version and Compile
+* Version: C++14
+* Compile
+    * Exporter: `g++ -o exporter.o exporter.cpp -lpcap`
+    * Collector: `g++ -o collector.o collector.cpp -l sqlite3`
+
 ## Overall Structure
 
 The overall structure is the same as the following.
