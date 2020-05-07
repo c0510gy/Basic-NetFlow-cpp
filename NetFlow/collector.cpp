@@ -6,7 +6,10 @@
 #include "headers/Types.h"
 using namespace std;
 
-UDPserver udp = UDPserver(1234, 1024);
+// Collector 정보
+#define COLLECTOR_PORT 1234
+
+UDPserver udp = UDPserver(COLLECTOR_PORT, 1024);
 DBManager db = DBManager("NetFlow.db");
 
 int main(){
