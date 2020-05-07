@@ -47,3 +47,7 @@ A single collector collects all the flow records from exporters. As receives fro
 * startTime: time when the first packet of the flow was captured
 * duration: time that has passed since the first packet was captured
 * packets: number of packets
+
+## Flow Packet Format
+
+In this project, I didn't adapt NetFlow's standard packet format yet, since the project only uses a fixed number of attributes for distinguishing net flows.
